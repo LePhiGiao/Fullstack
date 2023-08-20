@@ -1,27 +1,17 @@
-import mysql from 'mysql2'
-
-//connect to database
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    database: 'jwt'
-});
+import userService from '../service/userService'
 
 const handleHelloWorld = (req, res) => {
     return res.render('home.ejs')
 }
 
-const handleUserPage = (req, res) => {
-    return res.render('user.ejs')
+const handleUserPage = async (req, res) => {
+    let userList = await userService.getUserList()
+    console.log('check user list', userList)
+    return res.render('user.ejs', { userList })
 }
 const handleCreateNewUser = (req, res) => {
     let { email, password, username } = req.body
-    connection.query(
-        'INSERT INTO users (email, password, username) VALUES (?, ?, ?)', [email, password, username],
-        function (err, results, fields) {
-            console.log(results);
-        }
-    );
+    userService.createNewUser(email, password, username)
 
     return res.send('Hello Create Usser')
 }
