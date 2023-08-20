@@ -1,6 +1,4 @@
-import bcrypt, { hash } from 'bcrypt'
-import mysql from 'mysql2/promise'
-import bluebird from 'bluebird'
+import bcrypt from 'bcrypt'
 import db from '../models/index'
 
 
@@ -43,28 +41,40 @@ const createNewUser = async (email, password, username) => {
 
 //get list user
 const getUserList = async () => {
-    const connection = await mysql.createConnection({ host: 'localhost', user: 'root', database: 'jwt', Promise: bluebird });
-    const [rows, fields] = await connection.execute('SELECT * FROM user');
-    return rows
+    let users = []
+    users = await db.User.findAll()
+
+    return users
 }
 
 //delele user
-const deleteUser = async (id) => {
-    const connection = await mysql.createConnection({ host: 'localhost', user: 'root', database: 'jwt', Promise: bluebird });
-    const [rows, fields] = await connection.execute('DELETE FROM user WHERE id=?', [id]);
+const deleteUser = async (userId) => {
+    await db.User.destroy({
+        where: {
+            id: userId
+        }
+    })
+
 }
 
 // get User by ID
-const getUserById = async (id) => {
-    const connection = await mysql.createConnection({ host: 'localhost', user: 'root', database: 'jwt', Promise: bluebird });
-    const [rows, fields] = await connection.execute('SELECT * FROM user WHERE id=?', [id])
-    return rows
+const getUserById = async (userId) => {
+    let user = {}
+    user = await db.User.findOne({ where: { id: userId } })
+
+    return user
 }
 
 // update user
 const updateUserInfo = async (email, username, id) => {
-    const connection = await mysql.createConnection({ host: 'localhost', user: 'root', database: 'jwt', Promise: bluebird });
-    const [rows, fields] = await connection.execute('UPDATE user SET email=?, username=? WHERE id=?', [email, username, id])
+    await db.User.update({
+        email: email,
+        username: username
+    }, {
+        where: {
+            id: id
+        }
+    })
 }
 
 module.exports = {
