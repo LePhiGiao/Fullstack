@@ -52,12 +52,25 @@ const getUserList = async () => {
     return rows
 }
 
+//delele user
 const deleteUser = async (id) => {
     const connection = await mysql.createConnection({ host: 'localhost', user: 'root', database: 'jwt', Promise: bluebird });
     const [rows, fields] = await connection.execute('DELETE FROM users WHERE id=?', [id]);
+}
+
+// get User by ID
+const getUserById = async (id) => {
+    const connection = await mysql.createConnection({ host: 'localhost', user: 'root', database: 'jwt', Promise: bluebird });
+    const [rows, fields] = await connection.execute('SELECT * FROM users WHERE id=?', [id])
     return rows
 }
 
+// update user
+const updateUserInfo = async (email, username, id) => {
+    const connection = await mysql.createConnection({ host: 'localhost', user: 'root', database: 'jwt', Promise: bluebird });
+    const [rows, fields] = await connection.execute('UPDATE users SET email=?, username=? WHERE id=?', [email, username, id])
+}
+
 module.exports = {
-    hashUserPassword, createNewUser, getUserList, deleteUser
+    hashUserPassword, createNewUser, getUserList, deleteUser, getUserById, updateUserInfo
 }
