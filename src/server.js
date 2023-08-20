@@ -1,7 +1,8 @@
 import express from 'express'
-import configViewEngine from './configs/viewEngine'
+import configViewEngine from './config/viewEngine'
 import initWebRoute from './routes/web'
 import bodyParser from 'body-parser'
+import connection from './config/connectDB'
 require('dotenv').config()
 
 const app = express()
@@ -13,6 +14,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //config viewEngine
 configViewEngine(app)
+
+//test connectionDB
+connection()
 
 //init route
 initWebRoute(app)
