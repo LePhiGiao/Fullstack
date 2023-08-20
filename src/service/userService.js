@@ -2,12 +2,6 @@ import bcrypt, { hash } from 'bcrypt'
 import mysql from 'mysql2/promise'
 import bluebird from 'bluebird'
 
-//connect to database
-// const connection = mysql.createConnection({
-//     host: 'localhost',
-//     user: 'root',
-//     database: 'jwt'
-// });
 
 
 //hash password
@@ -32,15 +26,11 @@ const hashUserPassword = (userPassword) => {
 }
 
 //create User
-const createNewUser = (email, password, username) => {
+const createNewUser = async (email, password, username) => {
+    const connection = await mysql.createConnection({ host: 'localhost', user: 'root', database: 'jwt', Promise: bluebird });
     let hashPass = hashUserPassword(password)
-    //insert Data
-    connection.query(
-        'INSERT INTO users (email, password, username) VALUES (?, ?, ?)', [email, hashPass, username],
-        function (err, results, fields) {
-            console.log(results);
-        }
-    );
+    const [rows, fields] = await connection.execute('INSERT INTO users (email, password, username) VALUES (?, ?, ?)', [email, hashPass, username]);
+
 }
 
 //get list user
@@ -62,6 +52,12 @@ const getUserList = async () => {
     return rows
 }
 
+const deleteUser = async (id) => {
+    const connection = await mysql.createConnection({ host: 'localhost', user: 'root', database: 'jwt', Promise: bluebird });
+    const [rows, fields] = await connection.execute('DELETE FROM users WHERE id=?', [id]);
+    return rows
+}
+
 module.exports = {
-    hashUserPassword, createNewUser, getUserList
+    hashUserPassword, createNewUser, getUserList, deleteUser
 }
