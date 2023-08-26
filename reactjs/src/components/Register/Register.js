@@ -1,7 +1,7 @@
 import React from 'react';
 import './Register.scss'
 import { useNavigate } from 'react-router-dom';
-// import axios from 'axios';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -75,15 +75,21 @@ function Register(props) {
     const handleRegister = () => {
         let check = isValidInputs()
         let userData = { email, phone, username, password }
-        console.log('>>>> check UserData: ', userData)
-        // toast.success("Wow so easy !");
+
+        if (check === true) {
+            axios.post('http://localhost:8081/api/v1/register', userData)
+        }
+
+
     }
 
     useEffect(() => {
-        // axios.get('http://localhost:8081/api/test-api')
-        //     .then(res => {
-        //         console.log('Check data axios: ', res)
-        //     })
+        axios.get('http://localhost:8081/api/v1/test-api')
+            .then(res => {
+                console.log('Check data axios: ', res)
+            })
+
+
     }, [])
 
     return (
