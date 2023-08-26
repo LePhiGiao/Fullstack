@@ -1,7 +1,14 @@
 import React from 'react';
 import './Login.scss'
+import { useNavigate } from "react-router-dom";
 
 function Login(props) {
+    const navigate = useNavigate()
+
+    const handleCreate = () => {
+        navigate('/register')
+    }
+
     return (
         <div className='login-container'>
             <div className='container'>
@@ -22,11 +29,11 @@ function Login(props) {
                         <input type='password' className='form-control' placeholder='password' />
                         <button className='btn btn-primary'>Login</button>
                         <span className='text-center'>
-                            <a href="#" className='forgot-password'>Forgot password?</a>
+                            <a href='/' className='forgot-password'>Forgot password?</a>
                         </span>
                         <hr />
                         <div className='text-center'>
-                            <button className='btn btn-success'>Create new user</button>
+                            <button className='btn btn-success' onClick={() => handleCreate()}>Create new user</button>
                         </div>
                     </div>
                 </div>
