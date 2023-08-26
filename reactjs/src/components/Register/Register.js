@@ -14,41 +14,62 @@ function Register(props) {
     const [username, setUserName] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-
+    const defaultValidInput = {
+        isValidEmail: true,
+        isValidPhone: true,
+        isValidUsername: true,
+        isValidPassword: true,
+        isValidConfirmPassword: true,
+    }
+    const [objectCheckInput, setObjectCheckInput] = useState(defaultValidInput)
 
     const handleLogin = () => {
         navigate('/login')
     }
 
     const isValidInputs = () => {
+
+        setObjectCheckInput(defaultValidInput)
+
         if (!email) {
+            setObjectCheckInput({ ...defaultValidInput, isValidEmail: false })
             toast.error('Email is required!')
             return false
         }
         let regx = /^\S+@\S+\.\S+$/
         if (!regx.test(email)) {
+            setObjectCheckInput({ ...defaultValidInput, isValidEmail: false })
             toast.error('Email is invalid!')
             return false
         }
 
         if (!phone) {
+            setObjectCheckInput({ ...defaultValidInput, isValidPhone: false })
             toast.error('Phone is required!')
             return false
         }
         if (!username) {
+            setObjectCheckInput({ ...defaultValidInput, isValidUsername: false })
             toast.error('username is required!')
             return false
         }
         if (!password) {
+            setObjectCheckInput({ ...defaultValidInput, isValidPassword: false })
             toast.error('Password is required!')
             return false
         }
         if (password !== confirmPassword) {
+            setObjectCheckInput({ ...defaultValidInput, isValidConfirmPassword: false })
             toast.error('PassconfirmPassword is invalid!')
             return false
         }
 
         return true
+    }
+
+    const handleInutEmail = e => {
+        setEmail(e.target.value)
+        setObjectCheckInput({ ...defaultValidInput, isValidEmail: true })
     }
 
     const handleRegister = () => {
@@ -85,17 +106,17 @@ function Register(props) {
                             <label>Email</label>
                             <input
                                 type='text'
-                                className='form-control'
+                                className={objectCheckInput.isValidEmail ? 'form-control' : 'form-control is-invalid'}
                                 placeholder='Email address'
                                 value={email}
-                                onChange={e => setEmail(e.target.value)}
+                                onChange={e => handleInutEmail(e)}
                             />
                         </div>
                         <div className='from-group'>
                             <label>Phone Number</label>
                             <input
                                 type='text'
-                                className='form-control'
+                                className={objectCheckInput.isValidPhone ? 'form-control' : 'form-control is-invalid'}
                                 placeholder='Phone number'
                                 value={phone}
                                 onChange={e => setPhone(e.target.value)}
@@ -105,7 +126,7 @@ function Register(props) {
                             <label>Username</label>
                             <input
                                 type='text'
-                                className='form-control'
+                                className={objectCheckInput.isValidUsername ? 'form-control' : 'form-control is-invalid'}
                                 placeholder='Phone number'
                                 value={username}
                                 onChange={e => setUserName(e.target.value)}
@@ -115,7 +136,7 @@ function Register(props) {
                             <label>Password</label>
                             <input
                                 type='password'
-                                className='form-control'
+                                className={objectCheckInput.isValidPassword ? 'form-control' : 'form-control is-invalid'}
                                 placeholder='password'
                                 value={password}
                                 onChange={e => setPassword(e.target.value)}
@@ -125,7 +146,7 @@ function Register(props) {
                             <label>Confirm Password</label>
                             <input
                                 type='password'
-                                className='form-control'
+                                className={objectCheckInput.isValidConfirmPassword ? 'form-control' : 'form-control is-invalid'}
                                 placeholder='password'
                                 value={confirmPassword}
                                 onChange={e => setConfirmPassword(e.target.value)}
