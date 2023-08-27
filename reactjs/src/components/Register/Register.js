@@ -1,9 +1,9 @@
 import React from 'react';
 import './Register.scss'
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { registerNewUser } from '../../services/userService'
 
 
 
@@ -72,25 +72,21 @@ function Register(props) {
         setObjectCheckInput({ ...defaultValidInput, isValidEmail: true })
     }
 
-    const handleRegister = () => {
+    const handleRegister = async () => {
         let check = isValidInputs()
         let userData = { email, phone, username, password }
 
         if (check === true) {
-            axios.post('http://localhost:8081/api/v1/register', userData)
+            let response = await registerNewUser(userData)
+            let serverData = response.data
+            if (+serverData.EC === 0) {     //convert từ string sang number
+                toast.success(serverData.EM)
+                navigate('/login')
+            } else {
+                toast.error(serverData.EM)
+            }
         }
-
-
     }
-
-    useEffect(() => {
-        axios.get('http://localhost:8081/api/v1/test-api')
-            .then(res => {
-                console.log('Check data axios: ', res)
-            })
-
-
-    }, [])
 
     return (
         <div className='register-container'>
@@ -133,7 +129,7 @@ function Register(props) {
                             <input
                                 type='text'
                                 className={objectCheckInput.isValidUsername ? 'form-control' : 'form-control is-invalid'}
-                                placeholder='Phone number'
+                                placeholder='User Name'
                                 value={username}
                                 onChange={e => setUserName(e.target.value)}
                             />
@@ -153,7 +149,7 @@ function Register(props) {
                             <input
                                 type='password'
                                 className={objectCheckInput.isValidConfirmPassword ? 'form-control' : 'form-control is-invalid'}
-                                placeholder='password'
+                                placeholder='Confirm Password'
                                 value={confirmPassword}
                                 onChange={e => setConfirmPassword(e.target.value)}
                             />
