@@ -23,8 +23,6 @@ function Login(props) {
         }
     }, [navigate])
 
-
-
     const handleCreate = () => {
         navigate('/register')
     }
