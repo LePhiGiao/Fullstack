@@ -1,12 +1,69 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Login.scss'
 import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { loginUser } from '../../services/userService'
 
 function Login(props) {
     const navigate = useNavigate()
+    const [valueLogin, setValueLogin] = useState('')
+    const [password, setPassword] = useState('')
+    const defaultObjValidInput = {
+        isValidInputLogin: true,
+        isValidPassword: true
+    }
+    const [objValidInput, setObjValidInput] = useState(defaultObjValidInput)
+
+    useEffect(() => {
+        let session = sessionStorage.getItem("account")
+        if (session) {
+            navigate('/')
+            window.location.reload()
+        }
+    }, [navigate])
+
+
 
     const handleCreate = () => {
         navigate('/register')
+    }
+
+    const handlePressEnter = (e) => {
+        if (e.code === 'Enter' && e.keyCode === 13) {
+            handleLogin()
+        }
+    }
+
+    const handleLogin = async () => {
+        setObjValidInput(defaultObjValidInput)
+        if (!valueLogin) {
+            toast.error('Please enter your email address or phone number')
+            setObjValidInput({ ...defaultObjValidInput, isValidInputLogin: false })
+            return;
+        }
+        if (!password) {
+            toast.error('Please enter your password')
+            setObjValidInput({ ...defaultObjValidInput, isValidPassword: false })
+            return;
+        }
+        let response = await loginUser(valueLogin, password)
+        if (response && response.data && +response.data.EC === 0) {
+            //success
+            let data = {
+                isAuthenticated: true,
+                token: 'fake token'
+            }
+            sessionStorage.setItem("account", JSON.stringify(data));
+            navigate('/users')
+            window.location.reload();
+        }
+        if (response && response.data && +response.data.EC !== 0) {
+            //error
+            toast.error(response.data.EM)
+        }
+
+        console.log('>>> check response', response.data)
     }
 
     return (
@@ -25,9 +82,22 @@ function Login(props) {
                         <div className='brand d-sm-none'>
                             <h1><strong>facebook</strong></h1>
                         </div>
-                        <input type='text' className='form-control' placeholder='Email address or phone number' />
-                        <input type='password' className='form-control' placeholder='password' />
-                        <button className='btn btn-primary'>Login</button>
+                        <input
+                            type='text'
+                            className={objValidInput.isValidInputLogin ? 'form-control' : 'form-control is-invalid'}
+                            placeholder='Email address or phone number'
+                            value={valueLogin}
+                            onChange={(e) => setValueLogin(e.target.value)}
+                        />
+                        <input
+                            type='password'
+                            className={objValidInput.isValidPassword ? 'form-control' : 'form-control is-invalid'}
+                            placeholder='password'
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            onKeyDown={(e) => handlePressEnter(e)}
+                        />
+                        <button className='btn btn-primary' onClick={() => handleLogin()}>Login</button>
                         <span className='text-center'>
                             <a href='/' className='forgot-password'>Forgot password?</a>
                         </span>
