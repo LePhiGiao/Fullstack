@@ -32,6 +32,38 @@ const getAllUser = async () => {
     }
 }
 
+const getUserWithPagination = async (page, limit) => {
+    try {
+        let offset = (page - 1) * limit
+        let { count, rows } = await db.User.findAndCountAll({
+            offset: offset,
+            limit: limit
+        })
+
+        let totalPage = Math.ceil(count / limit)
+
+        let data = {
+            totalRows: count,       //Tổng số phần tử trong db
+            totalPage: totalPage,
+            users: rows             //Số phần tử được lấy ra tương ứng với Page ở dạng object
+        }
+
+        return {
+            EM: 'success',
+            EC: 0,
+            DT: data
+        }
+
+    } catch (error) {
+        console.log(error)
+        return {
+            EM: 'Something wrong with service',
+            EC: 1,
+            DT: []
+        }
+    }
+}
+
 const createNewUser = async (data) => {
     try {
         await db.User.create({
@@ -71,5 +103,5 @@ const deleteUser = async (id) => {
 }
 
 module.exports = {
-    getAllUser, createNewUser, updateUser, deleteUser
+    getAllUser, createNewUser, updateUser, deleteUser, getUserWithPagination
 }
