@@ -73,13 +73,13 @@ const updateFunc = (req, res) => {
     }
 }
 
-const deleteFunc = (req, res) => {
+const deleteFunc = async (req, res) => {
     try {
-
+        await userAPIservice.deleteUser(req.body.id)
         return res.status(200).json({
-            EM: data.EM, //error message
-            EC: data.EC, //error code
-            DT: data.DT, // Data
+            EM: 'Delete User success', //error message
+            EC: '0', //error code
+            DT: '', // Data 
         })
     } catch (error) {
         console.log(error)
