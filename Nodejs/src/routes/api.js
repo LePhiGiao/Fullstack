@@ -2,6 +2,7 @@ import express from 'express'
 const router = express.Router()
 import apiController from '../controllers/apiController'
 import userController from '../controllers/userController'
+import groupController from '../controllers/groupController'
 
 const initAPIRoute = (app) => {
 
@@ -15,6 +16,8 @@ const initAPIRoute = (app) => {
     router.post('/user/create', userController.createFunc)
     router.put('/user/update', userController.updateFunc)
     router.delete('/user/delete', userController.deleteFunc)
+
+    router.get('/group/read', groupController.readFunc)
 
 
     return app.use('/api/v1', router);

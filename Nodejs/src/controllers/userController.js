@@ -6,8 +6,6 @@ const readFunc = async (req, res) => {
         if (req.query.page && req.query.limit) {
             let page = req.query.page
             let limit = req.query.limit
-            console.log('>>>> check data', 'page = ', page, 'limit = ', limit)
-
             let data = await userAPIservice.getUserWithPagination(+page, +limit)
             return res.status(200).json({
                 EM: data.EM, //error message
@@ -35,11 +33,11 @@ const readFunc = async (req, res) => {
     }
 }
 
-const createFunc = (req, res) => {
+const createFunc = async (req, res) => {
     try {
-
+        let data = await userAPIservice.createNewUser(req.body)
         return res.status(200).json({
-            EM: data.EM, //error message
+            EM: data.EM, //error message 
             EC: data.EC, //error code
             DT: data.DT, // Data
         })
