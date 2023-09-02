@@ -5,6 +5,7 @@ import ReactPaginate from 'react-paginate';
 import './User.scss'
 import { toast } from 'react-toastify';
 import ModalDeleteUser from '../Modal/ModalDeleteUser';
+import ModalUser from '../Modal/ModalUser';
 
 const User = (props) => {
     const [listUsers, setListUsers] = useState([])
@@ -13,6 +14,7 @@ const User = (props) => {
     const [totalPages, setTotalPages] = useState(0)
     const [showModalDelete, setShowModalDelete] = useState(false)
     const [dataModal, setDataModal] = useState([])
+    const [isShowModalUser, setIsShowModalUser] = useState(false)
 
     const fetchUsers = useCallback(async () => {
         let response = await fetchAllUsers(currentPage, currentLimit)
@@ -42,6 +44,11 @@ const User = (props) => {
         setDataModal([])
     }
 
+    const onHideModalUser = () => {
+        setIsShowModalUser(false)
+    }
+
+
     const confirmDeleteUser = async () => {
         let response = await deleteUser(dataModal)
         if (response && +response.data.EC === 0) {
@@ -65,7 +72,7 @@ const User = (props) => {
                         </div>
                         <div className='action'>
                             <button className='btn btn-primary'>Refresh</button>
-                            <button className='btn btn-warning'>Add New User</button>
+                            <button className='btn btn-warning' onClick={() => setIsShowModalUser(true)}>Add New User</button>
                         </div>
                     </div>
                     <div className='user-body'>
@@ -149,6 +156,12 @@ const User = (props) => {
                 handleClose={handleClose}
                 confirmDeleteUser={confirmDeleteUser}
                 dataModal={dataModal}
+            />
+
+            <ModalUser
+                title={'Create new user'}
+                onHide={onHideModalUser}
+                show={isShowModalUser}
             />
         </>
     );
