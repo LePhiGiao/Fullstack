@@ -15,6 +15,8 @@ const User = (props) => {
     const [showModalDelete, setShowModalDelete] = useState(false)
     const [dataModal, setDataModal] = useState([])
     const [isShowModalUser, setIsShowModalUser] = useState(false)
+    const [actionModalUser, setActionModalUser] = useState('CREATE')
+    const [dataUserModal, setDataUserModal] = useState([])
 
     const fetchUsers = useCallback(async () => {
         let response = await fetchAllUsers(currentPage, currentLimit)
@@ -39,13 +41,22 @@ const User = (props) => {
         setShowModalDelete(true)
 
     }
+
+    const handleEditUser = (user) => {
+        setActionModalUser('UPDATE')
+        setDataUserModal(user)
+        setIsShowModalUser(true)
+    }
+
     const handleClose = () => {
         setShowModalDelete(false)
         setDataModal([])
     }
 
-    const onHideModalUser = () => {
+    const onHideModalUser = async () => {
         setIsShowModalUser(false)
+        setDataUserModal([])
+        await fetchUsers()
     }
 
 
@@ -72,7 +83,15 @@ const User = (props) => {
                         </div>
                         <div className='action'>
                             <button className='btn btn-primary'>Refresh</button>
-                            <button className='btn btn-warning' onClick={() => setIsShowModalUser(true)}>Add New User</button>
+                            <button
+                                className='btn btn-warning'
+                                onClick={() => {
+                                    setIsShowModalUser(true)
+                                    setActionModalUser('CREATE')
+                                }}
+                            >
+                                Add New User
+                            </button>
                         </div>
                     </div>
                     <div className='user-body'>
@@ -94,13 +113,17 @@ const User = (props) => {
                                         {listUsers.map((item, index) => {
                                             return (
                                                 <tr key={`row ${index}`}>
-                                                    <td>{index + 1}</td>
+                                                    <td>{(currentPage - 1) * currentLimit + index + 1}</td>
                                                     <td>{item.id}</td>
                                                     <td>{item.email}</td>
                                                     <td>{item.username}</td>
                                                     <td>{item.Group ? item.Group.name : ''}</td>
                                                     <td>
-                                                        <button className='btn btn-warning'>Edit</button>
+                                                        <button className='btn btn-warning'
+                                                            onClick={() => handleEditUser(item)}
+                                                        >
+                                                            Edit
+                                                        </button>
                                                         <button className='btn btn-danger ml-3 mx-3'
                                                             onClick={() => handleDeleteUser(item)}
                                                         >
@@ -159,9 +182,10 @@ const User = (props) => {
             />
 
             <ModalUser
-                title={'Create new user'}
                 onHide={onHideModalUser}
                 show={isShowModalUser}
+                action={actionModalUser}
+                dataUserModal={dataUserModal}
             />
         </>
     );
