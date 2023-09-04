@@ -78,7 +78,7 @@ function Register(props) {
 
         if (check === true) {
             let response = await registerNewUser(userData)
-            let serverData = response.data
+            let serverData = response
             if (+serverData.EC === 0) {     //convert từ string sang number
                 toast.success(serverData.EM)
                 navigate('/login')

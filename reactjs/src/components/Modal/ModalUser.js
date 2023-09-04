@@ -2,7 +2,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import React, { useState, useEffect, useCallback } from 'react';
 import './ModalUser.scss'
-import { fetchGroup, createNewUser, fetchAllUsers } from '../../services/userService'
+import { fetchGroup, createNewUser, updateCurrentUser } from '../../services/userService'
 import { toast } from 'react-toastify';
 import _ from 'lodash'
 
@@ -35,17 +35,21 @@ function ModalUser(props) {
     const [userData, setUserData] = useState(defaultUserData)
     const [validInput, setValidInput] = useState(validInputDefault)
 
+    //get group from db to add form select Group
     const getGroup = useCallback(async () => {
         let res = await fetchGroup()
-        if (res && res.data && res.data.EC === 0) {
-            setUserGroup(res.data.DT)
-            if (res.data.DT && res.data.DT.length > 0) {
-                let group = res.data.DT
+        if (res && res.EC === 0) {
+            //set group
+            setUserGroup(res.DT)
+
+            //set group ID
+            if (res.DT && res.DT.length > 0) {
+                let group = res.DT
                 setUserData({ ...userData, group: group[0].id })
             }
         }
         else {
-            toast.error(res.data.EM)
+            toast.error(res.EM)
         }
 
     }, [])
@@ -54,6 +58,8 @@ function ModalUser(props) {
         getGroup()
     }, [getGroup])
 
+
+    //get select user group when click EDIT
     useEffect(() => {
         if (action === 'UPDATE') {
             setUserData({ ...dataUserModal, group: dataUserModal.Group ? dataUserModal.Group.id : '' })
@@ -69,8 +75,15 @@ function ModalUser(props) {
         setUserData(_userData);
     }
 
+    //validate data when create user
     const handleCheckValidInput = () => {
+        // Not validate with update
+        if (action === 'UPDATE') return true
+
+        // turn off warning input form
         setValidInput(validInputDefault)
+
+        //validate from input required
         let arr = ['email', 'phone', 'password', 'group']
         let check = true
         for (let i = 0; i < arr.length; i++) {
@@ -87,23 +100,31 @@ function ModalUser(props) {
         return check
     }
 
+    //handle CREATE or UPDATE user
     const handleConfirmUser = async () => {
         let check = handleCheckValidInput()
         if (check === true) {
-            let res = await createNewUser({ ...userData, groupId: userData['group'] })
-            if (res.data && res.data.EC === 0) {
+            let res = action === 'CREATE'
+                ?
+                await createNewUser({ ...userData, groupId: userData['group'] })
+                :
+                await updateCurrentUser({ ...userData, groupId: userData['group'] })
+
+            if (res && res.EC === 0) {
                 props.onHide()
-                setUserData({ ...defaultUserData, group: userGroup[0].id })
+                setUserData({ ...defaultUserData, group: userGroup && userGroup.length > 0 ? userGroup[0].id : '' })
+                setValidInput(validInputDefault)
             }
-            if (res.data && res.data.EC !== 0) {
-                toast.error(res.data.EM)
+            if (res && res.EC !== 0) {
+                toast.error(res.EM)
                 let _validInput = _.cloneDeep(validInputDefault)
-                _validInput[res.data.DT] = false
+                _validInput[res.DT] = false
                 setValidInput(_validInput)
             }
         }
     }
 
+    //handle close modal
     const handleCloseModalUser = async () => {
         props.onHide()
         setUserData(defaultUserData)
@@ -115,7 +136,7 @@ function ModalUser(props) {
             <Modal size="lg" show={props.show} className='modal-user' onHide={() => handleCloseModalUser()}>
                 <Modal.Header closeButton>
                     <Modal.Title id="contained-modal-title-vcenter">
-                        <span>{action === 'CREATE' ? 'Create new User' : 'Eidt User'}</span>
+                        <span>{action === 'CREATE' ? 'Create new User' : 'Edit User'}</span>
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>

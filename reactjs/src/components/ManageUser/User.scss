@@ -1,8 +1,25 @@
 .container {
     .manage-user-container {
+        .user-header {
+
+            .action {
+                .refesh {
+                    margin-right: 10px;
+                }
+
+                span {
+                    padding-right: 7px;
+                }
+            }
+        }
+
         .user-body {
-            button {
-                margin-right: 4x !important;
+            .edit {
+                min-width: 70px;
+            }
+
+            .delete {
+                min-width: 70px;
             }
         }
     }
