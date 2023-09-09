@@ -52,9 +52,9 @@ const createFunc = async (req, res) => {
     }
 }
 
-const updateFunc = (req, res) => {
+const updateFunc = async (req, res) => {
     try {
-
+        let data = await userAPIservice.updateUser(req.body)
         return res.status(200).json({
             EM: data.EM, //error message
             EC: data.EC, //error code
