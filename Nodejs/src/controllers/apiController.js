@@ -50,7 +50,9 @@ const handleLogin = async (req, res) => {
         let data = await loginResgisterService.handleUserLogin(req.body)
 
         //set cookies
-        res.cookie('jwt', data.DT.access_token, { httpOnly: true })
+        if (data && data.DT && data.DT.access_token) {
+            res.cookie('jwt', data.DT.access_token, { httpOnly: true })
+        }
 
         return res.status(200).json({
             EM: data.EM, //error message
