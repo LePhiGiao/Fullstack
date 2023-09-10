@@ -1,13 +1,15 @@
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
+import { UserContext } from '../context/UserContext'
 
 function PrivateRoutes(props) {
 
     //check authentication
+    const { user } = useContext(UserContext)
     let auth = false
-    let session = sessionStorage.getItem("account")
-    if (session) {
+
+    if (user && user.isAuthenticated === true) {
         auth = true
     }
 

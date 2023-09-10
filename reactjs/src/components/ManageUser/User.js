@@ -9,6 +9,7 @@ import ModalUser from '../Modal/ModalUser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowsRotate, faCirclePlus, faPenToSquare, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 
+
 const User = (props) => {
     const [listUsers, setListUsers] = useState([])
     const [currentPage, setCurrentPage] = useState(1)
@@ -23,6 +24,7 @@ const User = (props) => {
     const [isShowModalUser, setIsShowModalUser] = useState(false)
     const [actionModalUser, setActionModalUser] = useState('CREATE')
     const [dataUserModal, setDataUserModal] = useState([])
+
 
     //get Use on one page
     const fetchUsers = useCallback(async () => {

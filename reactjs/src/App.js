@@ -3,43 +3,55 @@ import Nav from './components/Navigation/Nav';
 import { BrowserRouter } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useEffect, useState } from 'react';
 import AppRoutes from './routes/AppRoutes';
-// import _ from 'lodash'
+import { Rings } from 'react-loader-spinner'
+import { UserContext } from './context/UserContext'
+import { useContext } from 'react';
 
 
 function App() {
-  const [account, setAccount] = useState({})
-
-  useEffect(() => {
-    let session = sessionStorage.getItem("account")
-    if (session) {
-      setAccount(JSON.parse(session))
-    }
-  }, [])
+  const { user } = useContext(UserContext)
 
   return (
     <BrowserRouter>
-      <div className='app-header'>
-        <Nav />
-      </div>
-      <div className="App">
-        <AppRoutes />
+      {user && user.isLoading
+        ?
+        <div className='loading-container'>
+          <Rings
+            height="80"
+            width="80"
+            radius="9"
+            color='#1877f2'
+            ariaLabel='three-dots-loading'
+            wrapperStyle
+            wrapperClass
+          />
+          <div>Loading data ...</div>
+        </div>
+        :
+        <>
+          <div className='app-header'>
+            <Nav />
+          </div>
+          <div className="App">
+            <AppRoutes />
 
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="dark"
-        />
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="dark"
+            />
 
-      </div>
+          </div>
+        </>
+      }
 
     </BrowserRouter>
   );
